@@ -1,0 +1,69 @@
+<!--
+    @license
+    Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+    This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+    The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+    The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+    Code distributed by Google as part of the polymer project is also
+    subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<!doctype html>
+<html>
+<head>
+
+  <title>chrome-storage demo</title>
+
+  <script src="components/webcomponentsjs/webcomponents.js"></script>
+
+  <link rel="import" href="components/chrome-storage/chrome-storage.html">
+
+</head>
+<body>
+
+<h1>chrome-storage demo</h1>
+
+  <x-test1></x-test1>
+
+  <polymer-element name="x-test1">
+    <template>
+      This string will be stored in chrome.storage.local and automatically retrieved when the app is reloaded:<br>
+      <input value="{{value}}">
+      <chrome-storage name="chrome-storage-text" value="{{value}}" on-chrome-storage-save="{{handleSave}}" on-chrome-storage-load="{{handleLoad}}"></chrome-storage>
+    </template>
+    <script>
+      Polymer('x-test1', {
+        handleSave: function () {
+          console.log('saved', this.value);
+        },
+        handleLoad: function () {
+          console.log('loaded', this.value);
+        }
+      })
+    </script>
+  </polymer-element>
+
+  <br><br>
+
+  <x-test2></x-test2>
+
+  <polymer-element name="x-test2">
+    <template>
+      The state of this checkbox will be stored and retrieved as well:
+      <input type="checkbox" checked="{{mode}}">
+      <chrome-storage name="chrome-storage-checkbox" value="{{mode}}" on-chrome-storage-save="{{handleSave}}" on-chrome-storage-load="{{handleLoad}}"></chrome-storage>
+    </template>
+    <script>
+      Polymer('x-test2', {
+        mode: false,
+        handleSave: function () {
+          console.log('saved', this.mode);
+        },
+        handleLoad: function () {
+          console.log('loaded', this.mode);
+        }
+      });
+    </script>
+  </polymer-element>
+
+</body>
+</html>

@@ -1,35 +1,4 @@
-<!--
-Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
 
-<!--
-Element access to chrome.storage.  The "name" property
-is the key to the data ("value" property) stored in chrome.storage.
-Based on Polymer/core-localstorage.
-
-`chrome-storage` automatically saves the value to chrome.storage when
-value is changed.  Note that if value is an object auto-save will be
-triggered only when value is a different instance. The element will default
-to chrome.storage.local, but if the 'sync' attribute is set to true it will use
-chrome.storage.sync instead.
-
-    <chrome-storage name="my-app-storage" value="{{value}}"></chrome-storage>
-
-@element chrome-storage
-@blurb Element access to chrome.storage for packaged apps.
-@url github.io
-@categories Data
--->
-
-<link rel="import" href="../polymer/polymer.html">
-
-<polymer-element name="chrome-storage" attributes="name value useRaw autoSaveDisabled sync" hidden>
-  <script>
 
     // Determine if current context is within a chrome packaged app or extension.
     // Then, determine if that app or extension manifest permissions include storage.
@@ -146,5 +115,25 @@ chrome.storage.sync instead.
 
     });
 
-  </script>
-</polymer-element>
+  ;
+
+      Polymer('x-test1', {
+        handleSave: function () {
+          console.log('saved', this.value);
+        },
+        handleLoad: function () {
+          console.log('loaded', this.value);
+        }
+      })
+    ;
+
+      Polymer('x-test2', {
+        mode: false,
+        handleSave: function () {
+          console.log('saved', this.mode);
+        },
+        handleLoad: function () {
+          console.log('loaded', this.mode);
+        }
+      });
+    

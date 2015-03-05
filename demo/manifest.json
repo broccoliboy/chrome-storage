@@ -1,0 +1,16 @@
+{
+  	"name": "chrome-storage-demo",
+  	"description": "A simple app that demonstrates the use of the chrome-storage polymer element.",
+  	"version": "0.0.1",
+  	"manifest_version": 2,
+  	"permissions": [
+  		"storage"
+  	],
+  	"app": {
+  		"background": {
+  			"scripts": [
+  				"main.js"
+        ]
+  		}
+  	}
+  }
