@@ -1,7 +1,10 @@
 # chrome-storage
 
-See the [component page](http://broccoliboy.github.io/chrome-storage) for more information.
+Polymer element based on [Polymer/core-localstorage](https://github.com/Polymer/core-localstorage) that saves data to chrome.storage instead of localStorage so it can be used in chrome packaged apps.
 
-## Getting Started
+## Installation
 
-We've put together a [guide for chrome-storage](http://www.polymer-project.org/docs/start/reusableelements.html) to help get you rolling.
+`bower install --save broccoliboy/chrome-storage`
+
+
+
