@@ -1,0 +1,16 @@
+{
+  "name": "chrome-storage",
+  "version": "0.0.0",
+  "keywords": [
+    "seed",
+    "polymer",
+    "web-components"
+  ],
+  "main": "chrome-storage.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^0.5.4"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^2.2.3"
+  }
+}

@@ -1,0 +1,79 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+Element providing solution to no problem in particular.
+
+##### Example
+
+    <chrome-storage></chrome-storage>
+
+@element chrome-storage
+@blurb Element providing solution to no problem in particular.
+@status alpha
+@homepage http://broccoliboy.github.io/chrome-storage
+-->
+<polymer-element name="chrome-storage" attributes="author fancy">
+  <template>
+    <link rel="stylesheet" href="chrome-storage.css">
+    <h1>Hello from chrome-storage</h1>
+    <content></content>
+  </template>
+  <script>
+    Polymer({
+      /**
+       * The `author` attribute sets an initial author
+       *
+       * @attribute author
+       * @type string
+       * @default 'Dimitri Glazkov'
+       */
+      author: 'Dimitri Glazkov',
+
+      /**
+       * `fancy` is a property that does something fancy.
+       *
+       * @property fancy
+       * @type bool
+       * @default false
+       */
+      fancy: false,
+
+      ready: function () {
+        // Ready is a lifecycle callback.
+        // You can do setup work in here.
+        // More info: http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods
+      },
+
+      /**
+       * The `sayHello` method will return a greeting.
+       *
+       * @method sayHello
+       * @param {String} greeting Pass in a specific greeting.
+       * @return {String} Returns a string greeting.
+       */
+      sayHello: function (greeting) {
+        var response = greeting || 'Hello World!';
+        return 'chrome-storage says, ' + response;
+      },
+
+      /**
+       * The `chrome-storage-lasers-success` event is fired whenever we
+       * call fireLasers.
+       *
+       * @event chrome-storage-lasers-success
+       * @param {Object} detail
+       *   @param {string} detail.sound An amazing sound.
+       */
+
+      /**
+       * The `fireLasers` method will fire the lasers. At least
+       * it will dispatch an event that claims lasers were fired :)
+       *
+       * @method fireLasers
+       */
+      fireLasers: function () {
+        this.fire('chrome-storage-lasers-success', { sound: 'Pew pew pew!' });
+      }
+    });
+  </script>
+</polymer-element>
