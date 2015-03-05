@@ -1,79 +1,149 @@
-<link rel="import" href="../polymer/polymer.html">
+<!--
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
 
 <!--
-Element providing solution to no problem in particular.
+Element access to chrome.storage.  The "name" property
+is the key to the data ("value" property) stored in chrome.storage.
+Based on Polymer/core-localstorage.
 
-##### Example
+`chrome-storage` automatically saves the value to chrome.storage when
+value is changed.  Note that if value is an object auto-save will be
+triggered only when value is a different instance. The element will default
+to chrome.storage.local, but if the 'sync' attribute is set to true it will use
+chrome.storage.sync instead. 
 
-    <chrome-storage></chrome-storage>
+    <chrome-storage name="my-app-storage" value="{{value}}"></chrome-storage>
 
 @element chrome-storage
-@blurb Element providing solution to no problem in particular.
-@status alpha
-@homepage http://broccoliboy.github.io/chrome-storage
+@blurb Element access to chrome.storage for packaged apps.
+@url github.io
+@categories Data
 -->
-<polymer-element name="chrome-storage" attributes="author fancy">
-  <template>
-    <link rel="stylesheet" href="chrome-storage.css">
-    <h1>Hello from chrome-storage</h1>
-    <content></content>
-  </template>
-  <script>
-    Polymer({
-      /**
-       * The `author` attribute sets an initial author
-       *
-       * @attribute author
-       * @type string
-       * @default 'Dimitri Glazkov'
-       */
-      author: 'Dimitri Glazkov',
 
-      /**
-       * `fancy` is a property that does something fancy.
-       *
-       * @property fancy
-       * @type bool
-       * @default false
-       */
-      fancy: false,
+<link rel="import" href="../polymer/polymer.html">
 
-      ready: function () {
-        // Ready is a lifecycle callback.
-        // You can do setup work in here.
-        // More info: http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods
-      },
+<polymer-element name="chrome-storage" attributes="name value useRaw autoSaveDisabled sync" hidden>
+<script>
 
-      /**
-       * The `sayHello` method will return a greeting.
-       *
-       * @method sayHello
-       * @param {String} greeting Pass in a specific greeting.
-       * @return {String} Returns a string greeting.
-       */
-      sayHello: function (greeting) {
-        var response = greeting || 'Hello World!';
-        return 'chrome-storage says, ' + response;
-      },
+  // Determine if current context is within a chrome packaged app or extension.
+  // Then, determine if that app or extension manifest permissions include storage.
+  isChromeApp = !!chrome.runtime;
+  if (isChromeApp) {
+    hasStoragePermission = chrome.runtime.getManifest().permissions.indexOf('storage') != -1;
+  }
 
-      /**
-       * The `chrome-storage-lasers-success` event is fired whenever we
-       * call fireLasers.
-       *
-       * @event chrome-storage-lasers-success
-       * @param {Object} detail
-       *   @param {string} detail.sound An amazing sound.
-       */
+  Polymer('chrome-storage', {
+    
+    /**
+     * Fired when a value is loaded from chrome.storage.
+     * @event chrome-storage-load
+     */
+     
+    /**
+     * The key to the data stored in chrome.storage.
+     *
+     * @attribute name
+     * @type string
+     * @default null
+     */
+    name: '',
+    
+    /**
+     * The data associated with the specified name.
+     *
+     * @attribute value
+     * @type object
+     * @default null
+     */
+    value: null,
+    
+    /**
+     * If true, the value is stored and retrieved without JSON processing.
+     *
+     * @attribute useRaw
+     * @type boolean
+     * @default false
+     */
+    useRaw: false,
+    
+    /**
+     * If true, auto save is disabled.
+     *
+     * @attribute autoSaveDisabled
+     * @type boolean
+     * @default false
+     */
+    autoSaveDisabled: false,
+	
+	/**
+     * If true, use chrome.storage.sync. Otherwise, use chrome.storage.local.
+     *
+     * @attribute sync
+     * @type boolean
+     * @default false
+     */
+    sync: false,
+    
+    valueChanged: function() {
+	  if (this.loaded && !this.autoSaveDisabled) {
+	    isChromeApp && hasStoragePermission && this.save();
+	  }
+    },
 
-      /**
-       * The `fireLasers` method will fire the lasers. At least
-       * it will dispatch an event that claims lasers were fired :)
-       *
-       * @method fireLasers
-       */
-      fireLasers: function () {
-        this.fire('chrome-storage-lasers-success', { sound: 'Pew pew pew!' });
-      }
-    });
-  </script>
+    nameChanged: function() {
+      isChromeApp && hasStoragePermission && this.load();
+    },
+    
+    load: function() {
+	
+	  var storage = this.sync ? chrome.storage.sync : chrome.storage.local;
+      
+	  storage.get(this.name, function (items) {
+	    if (this.useRaw) {
+		  this.value = items[this.name];
+		} else {
+		  this.value = JSON.parse(items[this.name]);
+		}
+		this.loaded = true;
+		this.asyncFire('chrome-storage-load');
+	  }.bind(this));
+	  
+    },
+    
+    /** 
+     * Saves the value to localStorage.
+     *
+     * @method save
+     */
+    save: function() {
+	
+	  var v = this.useRaw ? this.value : JSON.stringify(this.value);
+	  var obj = {};
+	  obj[this.name] = v;
+	  
+	  var storage = this.sync ? chrome.storage.sync : chrome.storage.local;
+	  
+	  storage.set(obj, function () {
+	    this.asyncFire('chrome-storage-save');
+	  })
+	  
+    },
+	
+	ready: function () {
+	  if (!isChromeApp) {
+	    console.error('You are attempting to use chrome.storage in a non-chromeapp environment. This will not work.');
+	  } else if (!hasStoragePermissions) {
+	    console.error('Your chrome app does not appear to have the ''storage'' permission in the manifest. The chrome-storage element requires this permission.');
+	  }
+	}
+    
+  });
+
+</script>
 </polymer-element>
