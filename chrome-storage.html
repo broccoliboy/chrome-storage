@@ -33,7 +33,7 @@ chrome.storage.sync instead.
 
     // Determine if current context is within a chrome packaged app or extension.
     // Then, determine if that app or extension manifest permissions include storage.
-    isChromeApp = !!(chrome.runtime && chrome.runtime.getManifest);
+    isChromeApp = !!(chrome && chrome.runtime && chrome.runtime.getManifest);
     if (isChromeApp) {
       hasStoragePermission = chrome.runtime.getManifest().permissions.indexOf('storage') != -1;
     }
