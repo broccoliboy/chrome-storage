@@ -105,12 +105,19 @@ chrome.storage.sync instead.
         var storage = this.sync ? chrome.storage.sync : chrome.storage.local;
 
         storage.get(this.name, function (items) {
-          if (this.useRaw) {
-            this.value = items[this.name];
-          } else {
-            this.value = JSON.parse(items[this.name]);
+          if (typeof items == 'object') {
+            if (this.useRaw) {
+              this.value = items[this.name];
+            } else {
+              if (typeof items[this.name] != 'undefined') {
+                this.value = JSON.parse(items[this.name]);
+              } else {
+                console.info("chrome-storage: " + this.name + " not found.");
+                return;
+              }
+            }
+            this.asyncFire('chrome-storage-load');
           }
-          this.asyncFire('chrome-storage-load');
         }.bind(this));
 
         this.loaded = true;
