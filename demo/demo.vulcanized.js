@@ -2,7 +2,7 @@
 
     // Determine if current context is within a chrome packaged app or extension.
     // Then, determine if that app or extension manifest permissions include storage.
-    isChromeApp = !!chrome.runtime;
+    isChromeApp = !!(chrome && chrome.runtime && chrome.runtime.getManifest);
     if (isChromeApp) {
       hasStoragePermission = chrome.runtime.getManifest().permissions.indexOf('storage') != -1;
     }
@@ -74,12 +74,19 @@
         var storage = this.sync ? chrome.storage.sync : chrome.storage.local;
 
         storage.get(this.name, function (items) {
-          if (this.useRaw) {
-            this.value = items[this.name];
-          } else {
-            this.value = JSON.parse(items[this.name]);
+          if (typeof items == 'object') {
+            if (this.useRaw) {
+              this.value = items[this.name];
+            } else {
+              if (typeof items[this.name] != 'undefined') {
+                this.value = JSON.parse(items[this.name]);
+              } else {
+                console.info("chrome-storage: " + this.name + " not found.");
+                return;
+              }
+            }
+            this.asyncFire('chrome-storage-load');
           }
-          this.asyncFire('chrome-storage-load');
         }.bind(this));
 
         this.loaded = true;
