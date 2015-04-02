@@ -113,7 +113,7 @@ chrome.storage.sync instead.
                 this.value = JSON.parse(items[this.name]);
               } else {
                 console.info("chrome-storage: " + this.name + " not found.");
-                return;
+                this.value = undefined;
               }
             }
             this.asyncFire('chrome-storage-load');
